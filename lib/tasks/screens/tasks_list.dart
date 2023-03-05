@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weekly_tasks/get_it_conf.dart';
 import 'package:weekly_tasks/routing/routes/routes.dart';
 import 'package:weekly_tasks/tasks/controllers/cubit/tasks_cubit.dart';
+import 'package:weekly_tasks/tasks/models/task.dart';
 import 'package:weekly_tasks/tasks/widgets/add_task_sheet.dart';
 import 'package:weekly_tasks/tasks/widgets/task_tile.dart';
 
@@ -38,9 +39,11 @@ class _TasksListView extends StatelessWidget {
           final cubit = BlocProvider.of<TasksCubit>(context);
           final title = await showModalBottomSheet(
             context: context,
-            constraints: const BoxConstraints.tightFor(height: 200),
             builder: (context) {
-              return const AddTask();
+              return Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: const AddTask(),
+              );
             },
           );
           if (title != null) {
@@ -51,13 +54,15 @@ class _TasksListView extends StatelessWidget {
       ),
       body: BlocBuilder<TasksCubit, TasksState>(
         builder: (context, state) {
-          print('state: $state');
+          final List<Task> list = state.tasks
+              .where((element) => element.expiryTime.isAfter(DateTime.now()))
+              .toList();
           return ListView.builder(
-            itemCount: state.tasks.length,
+            itemCount: list.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.all(16),
-                child: TaskTile(task: state.tasks[index]),
+                child: TaskTile(task: list[index]),
               );
             },
           );

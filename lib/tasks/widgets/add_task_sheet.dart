@@ -10,6 +10,7 @@ class AddTask extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: title,
@@ -19,7 +20,7 @@ class AddTask extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(title.text);
+              Navigator.of(context).pop(title.text.isEmpty ? null : title.text);
             },
             child: const Text('Save'),
           ),
